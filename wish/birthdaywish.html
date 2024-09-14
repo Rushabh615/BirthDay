@@ -12,8 +12,21 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            color: #fff;
+            background: #ff0000; /* Fallback red color */
+            color: #f03333;
+            overflow: hidden; /* Prevent scrollbars while loader is visible */
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('img/pic.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #ff0000;
+            z-index: -1; /* Send the background image behind other content */
         }
         .container {
             text-align: center;
@@ -22,6 +35,9 @@
             border-radius: 10px;
             width: 80%;
             max-width: 600px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
         }
         h1 {
             font-size: 3em;
@@ -55,20 +71,107 @@
         .btn:hover {
             background-color: #ff4a3a;
         }
-    </style>
-    <script>
-        function showBirthdayMessage() {
-            alert('Hey my Cutiepie Sakshi, happiest birthday to you!');
+        /* Loader styles */
+        .loader {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            z-index: 9999; /* Ensure the loader is on top */
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+            color: #fff;
+            text-align: center;
         }
-    </script>
+        .loader p {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Confetti animation */
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .confetti div {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff6f61;
+            opacity: 0.8;
+            transform: rotate(45deg);
+            animation: confetti-fall 5s ease-in-out infinite;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(45deg); }
+            100% { transform: translateY(100vh) rotate(45deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Happist Birthday, Sakshi!</h1>
+    <div id="loader" class="loader">
+        <p>Loading...</p>
+    </div>
+    <div id="confetti" class="confetti"></div>
+    <div class="container" id="content">
+        <h1>Happy Birthday, Sakshi!</h1>
         <p>On this special day, I just want to remind you how much you mean to me. You bring so much joy and love into my life, and I am grateful for every moment we share together.</p>
         <p class="heart">❤️ You are my everything ❤️</p>
         <p class="signature">With all my love, [Rushabh Baranwal]</p>
         <button class="btn" onclick="showBirthdayMessage()">Click Me!</button>
     </div>
+    <script>
+        function showBirthdayMessage() {
+            alert('Hey my Cutiepie Sakshi, happiest birthday to you!');
+        }
+
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('content');
+            const confetti = document.getElementById('confetti');
+
+            setTimeout(() => {
+                loader.style.display = 'none'; // Hide the loader after 5 seconds
+
+                // Show the main content with a fade-in effect
+                content.style.opacity = 1;
+                content.style.transform = 'translateY(0)';
+
+                // Trigger confetti animation
+                confetti.style.opacity = 1;
+
+                // Generate confetti elements
+                for (let i = 0; i < 100; i++) {
+                    const confettiPiece = document.createElement('div');
+                    confettiPiece.style.left = `${Math.random() * 100}vw`;
+                    confettiPiece.style.top = `${Math.random() * 100}vh`;
+                    confettiPiece.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                    confettiPiece.style.width = `${Math.random() * 10 + 5}px`;
+                    confettiPiece.style.height = confettiPiece.style.width;
+                    confetti.appendChild(confettiPiece);
+                }
+            }, 3000); // 5000 milliseconds = 5 seconds
+        });
+    </script>
 </body>
 </html>
